@@ -3429,15 +3429,15 @@ XamlRoot XamlRootFromTaskbarHostSharedPtr(void* taskbarHostSharedPtr[2]) {
 
 #if defined(_M_X64)
 {
-        const BYTE* b = static_cast<const BYTE*>(TaskbarHost_FrameHeight_Original);
+    const BYTE* b = static_cast<const BYTE*>(TaskbarHost_FrameHeight_Original);
 
-        if (b[0] == 0x48 && b[1] == 0x83 && b[2] == 0xEC && b[4] == 0x48 &&
-            b[5] == 0x83 && b[6] == 0xC1 && b[7] <= 0x7F) {
-            taskbarElementIUnknownOffset = b[7];
-        } else {
-            Wh_Log_safe(L"taskbar-multi-tray : unsupported TaskbarHost::FrameHeight");
-        }
+    if (b[0] == 0x48 && b[1] == 0x83 && b[2] == 0xEC && b[4] == 0x48 &&
+        b[5] == 0x83 && b[6] == 0xC1 && b[7] <= 0x7F) {
+        taskbarElementIUnknownOffset = b[7];
+    } else {
+        Wh_Log_safe(L"taskbar-multi-tray : unsupported TaskbarHost::FrameHeight");
     }
+}
 #else
 #error "Unsupported architecture"
 #endif
@@ -4134,7 +4134,7 @@ bool HookTaskbarDllSymbols() {
         Wh_Log_safe(L"taskbar-multi-tray : optional taskbar symbol unavailable: %s", label);
     };
 
-    WindhawkUtils::SYMBOL_HOOK setNotificationAreaIconManager2Hook[] = {
+    WindhawkUtils::SYMBOL_HOOK taskbarDllSetNotificationAreaIconManager2Hook[] = {
         {
             {
                 LR"(public: void __cdecl winrt::WindowsUdk::UI::Shell::implementation::TaskbarModel::SetNotificationAreaIconManager2(class std::shared_ptr<class NotificationAreaIconManager2>))",
@@ -4144,9 +4144,9 @@ bool HookTaskbarDllSymbols() {
             TaskbarModel_SetNotificationAreaIconManager2_Hook,
         },
     };
-    hookOptional(L"TaskbarModel::SetNotificationAreaIconManager2", setNotificationAreaIconManager2Hook);
+    hookOptional(L"TaskbarModel::SetNotificationAreaIconManager2", taskbarDllSetNotificationAreaIconManager2Hook);
 
-    WindhawkUtils::SYMBOL_HOOK getNotificationAreaPromotedIconsHook[] = {
+    WindhawkUtils::SYMBOL_HOOK taskbarDllGetNotificationAreaPromotedIconsHook[] = {
         {
             {
                 LR"(public: virtual int __cdecl winrt::impl::produce<struct winrt::WindowsUdk::UI::Shell::implementation::TaskbarModel,struct winrt::WindowsUdk::UI::Shell::ITaskbarModel3>::get_NotificationAreaPromotedIcons(void * *))",
@@ -4156,9 +4156,9 @@ bool HookTaskbarDllSymbols() {
             TaskbarModel_GetNotificationAreaPromotedIcons_Hook,
         },
     };
-    hookOptional(L"TaskbarModel::get_NotificationAreaPromotedIcons", getNotificationAreaPromotedIconsHook);
+    hookOptional(L"TaskbarModel::get_NotificationAreaPromotedIcons", taskbarDllGetNotificationAreaPromotedIconsHook);
 
-    WindhawkUtils::SYMBOL_HOOK getNotificationAreaOverflowIconsHook[] = {
+    WindhawkUtils::SYMBOL_HOOK taskbarDllGetNotificationAreaOverflowIconsHook[] = {
         {
             {
                 LR"(public: virtual int __cdecl winrt::impl::produce<struct winrt::WindowsUdk::UI::Shell::implementation::TaskbarModel,struct winrt::WindowsUdk::UI::Shell::ITaskbarModel6>::get_NotificationAreaOverflowIcons(void * *))",
@@ -4168,9 +4168,9 @@ bool HookTaskbarDllSymbols() {
             TaskbarModel_GetNotificationAreaOverflowIcons_Hook,
         },
     };
-    hookOptional(L"TaskbarModel::get_NotificationAreaOverflowIcons", getNotificationAreaOverflowIconsHook);
+    hookOptional(L"TaskbarModel::get_NotificationAreaOverflowIcons", taskbarDllGetNotificationAreaOverflowIconsHook);
 
-    WindhawkUtils::SYMBOL_HOOK addIconToVisibleCollectionHook[] = {
+    WindhawkUtils::SYMBOL_HOOK taskbarDllAddIconToVisibleCollectionHook[] = {
         {
             {
                 LR"(private: void __cdecl NotificationAreaIconManager2::AddIconToVisibleCollection(struct winrt::WindowsUdk::UI::Shell::implementation::NotificationAreaIcon2 *))",
@@ -4180,9 +4180,9 @@ bool HookTaskbarDllSymbols() {
             NotificationAreaIconManager2_AddIconToVisibleCollection_Hook,
         },
     };
-    hookOptional(L"NotificationAreaIconManager2::AddIconToVisibleCollection", addIconToVisibleCollectionHook);
+    hookOptional(L"NotificationAreaIconManager2::AddIconToVisibleCollection", taskbarDllAddIconToVisibleCollectionHook);
 
-    WindhawkUtils::SYMBOL_HOOK removeIconFromVisibleCollectionHook[] = {
+    WindhawkUtils::SYMBOL_HOOK taskbarDllRemoveIconFromVisibleCollectionHook[] = {
         {
             {
                 LR"(private: void __cdecl NotificationAreaIconManager2::RemoveIconFromVisibleCollection(struct winrt::WindowsUdk::UI::Shell::implementation::NotificationAreaIcon2 *))",
@@ -4192,9 +4192,9 @@ bool HookTaskbarDllSymbols() {
             NotificationAreaIconManager2_RemoveIconFromVisibleCollection_Hook,
         },
     };
-    hookOptional(L"NotificationAreaIconManager2::RemoveIconFromVisibleCollection", removeIconFromVisibleCollectionHook);
+    hookOptional(L"NotificationAreaIconManager2::RemoveIconFromVisibleCollection", taskbarDllRemoveIconFromVisibleCollectionHook);
 
-    WindhawkUtils::SYMBOL_HOOK shellNotifyIconHook[] = {
+    WindhawkUtils::SYMBOL_HOOK taskbarDllShellNotifyIconHook[] = {
         {
             {
                 LR"(public: bool __cdecl NotificationAreaIconManager2::ShellNotifyIcon(struct _TRAYNOTIFYDATAW * __ptr64 const))",
@@ -4204,7 +4204,7 @@ bool HookTaskbarDllSymbols() {
             NotificationAreaIconManager2_ShellNotifyIcon_Hook,
         },
     };
-    hookOptional(L"NotificationAreaIconManager2::ShellNotifyIcon", shellNotifyIconHook);
+    hookOptional(L"NotificationAreaIconManager2::ShellNotifyIcon", taskbarDllShellNotifyIconHook);
 
     return true;
 }
@@ -4218,7 +4218,7 @@ bool HookTwinuiPcshellSymbols() {
         return false;
     }
 
-    WindhawkUtils::SYMBOL_HOOK twinuiPcshellHooks[] = {
+    WindhawkUtils::SYMBOL_HOOK twinuiPcshellDllHooks[] = {
         {
             {LR"(public: bool __cdecl ImmersiveMonitorHelper::ConnectToMonitor(struct HWND__ *,struct tagPOINT))"},
             &ImmersiveMonitorHelper_ConnectToMonitor_Original,
@@ -4231,7 +4231,7 @@ bool HookTwinuiPcshellSymbols() {
         },
     };
 
-    if (!HookSymbols(module, twinuiPcshellHooks, ARRAYSIZE(twinuiPcshellHooks))) {
+    if (!HookSymbols(module, twinuiPcshellDllHooks, ARRAYSIZE(twinuiPcshellDllHooks))) {
         Wh_Log_safe(L"taskbar-multi-tray : failed to hook twinui.pcshell.dll symbols");
 
         return false;
